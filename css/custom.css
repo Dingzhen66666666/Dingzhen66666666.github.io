@@ -1,0 +1,562 @@
+/* ===================================================
+   1. 暗黑 / 明亮模式全局平滑过渡与基础配色
+   =================================================== */
+html,
+body,
+#web_bg,
+#page-header,
+#nav,
+#footer,
+.recent-post-item,
+#aside-content .card-widget,
+article#page,
+article#post {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
+}
+
+[data-theme="dark"] {
+  --global-bg: #121214 !important;
+}
+
+/* ===================================================
+   2. 全局壁纸：全屏固定、无遮罩、透亮
+   =================================================== */
+[data-theme="light"] #web_bg {
+  background: url('/img/white.jpg') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  filter: brightness(1) !important;
+}
+
+[data-theme="dark"] #web_bg {
+  background: url('/img/black.jpg') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  opacity: 1 !important;
+  filter: brightness(0.9) !important; /* 保留高亮度，稍微柔和 */
+}
+
+/* 彻底移除原生暗黑遮罩 */
+[data-theme="dark"] #web_bg::before,
+#page-header:before,
+[data-theme="dark"] #page-header:before {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* ===================================================
+   顶部幕布：浅灰色半透明 + 毛玻璃质感
+   =================================================== */
+/* 浅色模式：覆盖一层浅灰色膜 */
+#page-header {
+  /* 前三个数字 150 代表浅灰色，最后一个数字 0.25 代表透明度（可根据喜好微调 0.15~0.4） */
+  background: rgba(150, 150, 150, 0.1) !important; 
+  backdrop-filter: blur(1px) !important;
+  -webkit-backdrop-filter: blur(1px) !important;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05) !important; /* 底部加一条极淡的阴影分割 */
+}
+
+/* 暗色模式：稍微深一点的灰色膜，以适应夜间环境 */
+[data-theme="dark"] #page-header {
+  background: rgba(80, 80, 80, 0.455) !important; 
+  backdrop-filter: blur(1px) !important;
+  -webkit-backdrop-filter: blur(1px) !important;
+  box-shadow: none !important;
+}
+
+/* 确保清除主题自带的黑色死板遮罩 */
+#page-header::before,
+[data-theme="dark"] #page-header::before {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* ===================================================
+   3. 导航栏布局重构：靠左对齐、字号统一 1.05rem、顺序统一
+   =================================================== */
+#nav {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 0 20px !important;
+}
+
+#blog-info {
+  margin-right: 1.8rem !important;
+  flex-shrink: 0 !important;
+}
+
+#page-header #nav .blog-name {
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
+}
+
+/* 菜单容器整体紧贴博客名排在第二位 */
+#menus {
+  display: flex !important;
+  align-items: center !important;
+  order: 2 !important;
+}
+
+/* 统一所有菜单项（首页、归档等）字体、粗细与间距 */
+#page-header #nav .menus_items .menus_item a.site-page {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+#page-header #nav .menus_items .menus_item a.site-page i {
+  font-size: 1.05rem !important;
+  margin-right: 5px !important;
+}
+
+/* ===================================================
+   右侧按钮组（搜索 + 暗黑）：严格对齐菜单格式
+   =================================================== */
+
+/* 1. 让右侧按钮组排在菜单（order:2）的正后方 */
+#nav-right {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: 5px !important;
+  padding-left: 0 !important;
+  order: 3 !important;
+}
+
+#search-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 10px !important;
+}
+
+/* 2. 核心修复：颜色、阴影、字号与粗细完全同步菜单项 */
+#page-header #search-button .site-page,
+#page-header #nav #darkmode_button {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  /* 去掉黑灰色，改用与菜单完全一致的浅色变量 + 浮雕文字阴影 */
+  color: var(--light-grey) !important;
+  text-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.15) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: normal !important;
+
+  transform: translateY(5px) !important;
+}
+
+/* 图标也同步加上相同的阴影和大小 */
+#page-header #search-button .site-page i,
+#page-header #nav #darkmode_button i {
+  font-size: 1.05rem !important;
+  margin-right: 5px !important;
+  text-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 3. 动态变色：当页面往下滑动，导航栏固定并变成白色底板时，文字自动恢复深色且去除阴影 */
+#page-header.nav-fixed #search-button .site-page,
+#page-header.nav-fixed #nav #darkmode_button,
+#page-header.nav-fixed #search-button .site-page i,
+#page-header.nav-fixed #nav #darkmode_button i {
+  color: var(--font-color) !important;
+  text-shadow: none !important; 
+}
+
+/* 4. 鼠标悬停动效：悬停时变成主题色，与其他四个菜单项保持一致 */
+#page-header #search-button .site-page:hover,
+#page-header #nav #darkmode_button:hover {
+  color: var(--theme-color) !important;
+}
+
+/* ===================================================
+   4. 二次元鼠标指针、滚动条与动效
+   =================================================== */
+body {
+  cursor: url('https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_Hexo@master/cursor/default.cur'), auto !important;
+}
+
+a:hover, button:hover, .btn:hover, #sidebar .site-author-name:hover, .highlight-tools:hover {
+  cursor: url('https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_Hexo@master/cursor/pointer.cur'), pointer !important;
+}
+
+::selection {
+  background: #ff7597 !important;
+  color: #ffffff !important;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff7597 0%, #f78ca0 100%);
+}
+
+#aside-content .card-info .avatar-img img {
+  animation: none !important;
+  transform: rotate(0deg);
+  transition: transform 0.8s ease-in-out, box-shadow 0.5s ease-in-out !important;
+}
+
+#aside-content .card-info .avatar-img img:hover {
+  transform: rotate(360deg);
+  box-shadow: 0 0 16px rgba(255, 117, 151, 0.8) !important;
+}
+
+/* ===================================================
+   5. 侧边栏个人卡片
+   =================================================== */
+#aside-content .card-info {
+  position: relative !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  overflow: visible !important;
+  padding-top: 15px !important;
+}
+
+#aside-content .card-info::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, #38bdf8 0%, #e0f2fe 100%);
+  border-radius: 20px 20px 0 0;
+  z-index: 0;
+}
+
+#aside-content .card-info::after {
+  content: '📎';
+  position: absolute;
+  top: -10px; right: 12px;
+  font-size: 2.2rem;
+  transform: rotate(-10deg);
+  z-index: 10;
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.25));
+}
+
+#aside-content .card-info > * {
+  position: relative;
+  z-index: 1;
+}
+
+#aside-content .card-info .avatar-img {
+  margin: 10px auto 5px auto !important;
+}
+
+#aside-content .card-info .avatar-img img {
+  border: 4px solid #ffffff !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+#aside-content .card-info .author-info__name {
+  display: block !important;
+  margin: 12px auto 6px auto !important;
+  line-height: 1.4 !important;
+  clear: both !important;
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: #1e293b !important;
+  position: relative;
+  text-align: center;
+}
+
+#aside-content .card-info .author-info__name::after {
+  content: '';
+  position: absolute;
+  left: 20%; right: 20%;
+  bottom: 3px;
+  height: 9px;
+  background: rgba(253, 224, 71, 0.75);
+  z-index: -1;
+  border-radius: 4px;
+}
+
+#aside-content .card-info .author-info__description {
+  font-size: 0.75rem !important;
+  letter-spacing: 2.5px !important;
+  color: #64748b !important;
+  margin-top: 6px !important;
+  text-align: center;
+}
+
+#aside-content .card-info .site-data {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 16px 12px !important;
+  padding: 12px 0 !important;
+  border-top: 1px solid #f1f5f9 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+#aside-content .card-info .site-data > a {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  position: relative !important;
+}
+
+#aside-content .card-info .site-data > a:not(:last-child)::after {
+  content: '' !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  height: 24px !important;
+  width: 1px !important;
+  background-color: #cbd5e1 !important;
+}
+
+#aside-content .card-info .site-data a .headline {
+  font-size: 0.8rem !important;
+  color: #64748b !important;
+  margin-bottom: 4px !important;
+}
+
+#aside-content .card-info .site-data a .length-num {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+}
+
+/* 暗色模式下卡片与文字颜色修正 */
+[data-theme="dark"] #aside-content .card-info {
+  background: rgba(25, 25, 28, 0.75) !important;
+}
+[data-theme="dark"] #aside-content .card-info .author-info__name,
+[data-theme="dark"] #aside-content .card-info .author-info__description,
+[data-theme="dark"] #aside-content .card-info .site-data a .headline,
+[data-theme="dark"] #aside-content .card-info .site-data a .length-num,
+[data-theme="dark"] .card-calendar .cal-week,
+[data-theme="dark"] .card-calendar .cal-year-month,
+[data-theme="dark"] .card-calendar .cal-grid th,
+[data-theme="dark"] .card-calendar .cal-grid td,
+[data-theme="dark"] .card-calendar .cal-footer {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] #card-info-btn {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
+}
+
+
+/* ===================================================
+   7. 侧边栏日历卡片
+   =================================================== */
+#aside-content .card-announcement .item-headline {
+  display: none !important;
+}
+#aside-content .card-announcement {
+  padding: 16px 20px !important;
+  background: #ffffff !important;
+}
+
+.card-calendar {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+.card-calendar .cal-main {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding-bottom: 12px !important;
+  border-bottom: 1px dashed #b5dbd6 !important;
+}
+.card-calendar .cal-left {
+  text-align: center !important;
+  flex: 1.2 !important;
+}
+.card-calendar .cal-week {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: #1f2937 !important;
+}
+.card-calendar .cal-date {
+  font-size: 3.5rem !important;
+  font-weight: 800 !important;
+  font-style: italic !important;
+  color: #238b79 !important;
+  line-height: 1.1 !important;
+  margin: 2px 0 !important;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif !important;
+}
+.card-calendar .cal-year-month {
+  font-size: 0.75rem !important;
+  color: #6b7280 !important;
+}
+.card-calendar .cal-right {
+  flex: 1.8 !important;
+  margin-left: 12px !important;
+}
+.card-calendar .cal-grid {
+  width: 100% !important;
+  text-align: center !important;
+  border-collapse: collapse !important;
+  font-size: 0.8rem !important;
+  table-layout: fixed !important;
+}
+.card-calendar .cal-grid th {
+  color: #9ca3af !important;
+  font-weight: normal !important;
+  padding-bottom: 6px !important;
+}
+.card-calendar .cal-grid td {
+  padding: 5px 0 !important;
+  color: #374151 !important;
+  width: 14.28% !important;
+  font-size: 0.85rem !important;
+}
+.card-calendar .cal-grid td.today {
+  background: #238b79 !important;
+  color: #ffffff !important;
+  border-radius: 50% !important;
+  font-weight: bold !important;
+  box-shadow: 0 4px 10px rgba(35, 139, 121, 0.4) !important;
+}
+.card-calendar .cal-footer {
+  text-align: center !important;
+  font-size: 0.8rem !important;
+  color: #6b7280 !important;
+  margin-top: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* ===================================================
+   文章页头部标题与元数据优化 (精美二次元风格)
+   =================================================== */
+
+/* 1. 标题优化：加粗、放大、添加深色投影以抵抗高光壁纸，并增加底部粉色短划线 */
+#page-header #post-info .post-title {
+  font-weight: 900 !important;       /* 极限加粗，提升视觉冲击力 */
+  font-size: 2.8rem !important;      /* 适当放大字体 */
+  letter-spacing: 2px !important;    /* 增加字间距，显得更大气 */
+  /* 文字阴影：制造立体感，无论背景多亮都能看清纯白文字 */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4), 
+               0 0 10px rgba(0, 0, 0, 0.2) !important;
+  position: relative !important;
+  padding-bottom: 12px !important;   /* 给底线留出空间 */
+  margin-bottom: 15px !important;
+}
+
+/* 2. 文章元数据（日期、字数、浏览量等）优化 */
+#page-header #post-info .post-meta {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  /* 同样增加阴影，防止细小文字在亮色云朵背景上消失 */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) !important;
+  color: #f8f9fa !important;         /* 采用偏柔和的冷白，不那么刺眼 */
+}
+
+/* 3. 元数据图标提亮：将日历、时钟、眼睛等小图标染成主题色，打破沉闷 */
+#page-header #post-info .post-meta i {
+  color: #ff9a9e !important;         /* 替换为粉色图标 */
+  font-size: 1.05rem !important;     /* 图标稍微放大一点点 */
+  margin-right: 4px !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 4. 元数据之间的分割线（竖杠）微调，降低透明度避免喧宾夺主 */
+#page-header #post-info .post-meta-separator {
+  color: rgba(255, 255, 255, 0.5) !important;
+  margin: 0 10px !important;
+  text-shadow: none !important;
+}
+
+/* ===================================================
+   首页文章卡片 (终极修复版：精简选择器，确保命中)
+   =================================================== */
+
+/* 1. 强制重塑卡片主体 */
+div#recent-posts > div.recent-post-item {
+  border-radius: 18px !important;             
+  background: rgba(255, 255, 255, 0.75) !important; 
+  backdrop-filter: blur(10px) !important;     
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important; 
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 25px !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: row !important; /* 强制左图右文 */
+  overflow: hidden !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* 暗黑模式自适应 */
+[data-theme="dark"] div#recent-posts > div.recent-post-item {
+  background: rgba(30, 30, 34, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* 2. 悬停浮动动效 */
+div#recent-posts > div.recent-post-item:hover {
+  transform: translateY(-8px) scale(1.01) !important;
+  box-shadow: 0 15px 30px rgba(255, 117, 151, 0.2) !important;
+}
+
+/* 3. 左侧图片圆润与动画 */
+div#recent-posts > div.recent-post-item .post_cover {
+  width: 45% !important;
+  border-radius: 0 !important; /* 依赖父级溢出隐藏 */
+}
+div#recent-posts > div.recent-post-item .post_cover img {
+  transition: transform 0.6s ease !important;
+}
+div#recent-posts > div.recent-post-item:hover .post_cover img {
+  transform: scale(1.1) rotate(2deg) !important;
+}
+
+/* 4. 右侧内容区排版 */
+div#recent-posts > div.recent-post-item > .recent-post-info {
+  padding: 30px 40px !important; 
+  width: 55% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* ===================================================
+   修复：暗黑模式下日历卡片背景与文字颜色
+   =================================================== */
+
+/* 1. 解除暗黑模式下卡片的纯白背景锁定，改为通透的深色毛玻璃 */
+[data-theme="dark"] #aside-content .card-announcement {
+  background: rgba(30, 30, 34, 0.75) !important; 
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 2. 确保暗黑模式下，日历的所有普通文本变为清晰的纯白色 */
+[data-theme="dark"] .card-calendar .cal-week,
+[data-theme="dark"] .card-calendar .cal-year-month,
+[data-theme="dark"] .card-calendar .cal-grid th,
+[data-theme="dark"] .card-calendar .cal-grid td:not(.today), 
+[data-theme="dark"] .card-calendar .cal-footer {
+  color: #ffffff !important;
+}
+
+/* 3. 暗黑模式下，将日历内部的青色虚线分割线改为半透明白色，视觉更和谐 */
+[data-theme="dark"] .card-calendar .cal-main {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.2) !important;
+}

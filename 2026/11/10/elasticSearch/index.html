@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>elasticSearch | YukkiのBlog</title><meta name="author" content="Yukki"><meta name="copyright" content="Yukki"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="elasticSearch(ES)一.什么是ESelastic Search也就是es，是一个强大的开源、分布式、RESTful 风格的全文搜索引擎，介于应用和数据之间，只要将数据写入es,应用就可以通过一些关键词搜索到数据，效果就和百度类似  二.ES的底层存储与核心数据结构ES的底层是一套用Java编写的开源核心库 – Lucene 。ES是在Lucene外面包了一层分布式架构的”壳”，在底层">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticSearch">
+<meta property="og:url" content="https://dingzhen66666666.github.io/2026/11/10/elasticSearch/index.html">
+<meta property="og:site_name" content="YukkiのBlog">
+<meta property="og:description" content="elasticSearch(ES)一.什么是ESelastic Search也就是es，是一个强大的开源、分布式、RESTful 风格的全文搜索引擎，介于应用和数据之间，只要将数据写入es,应用就可以通过一些关键词搜索到数据，效果就和百度类似  二.ES的底层存储与核心数据结构ES的底层是一套用Java编写的开源核心库 – Lucene 。ES是在Lucene外面包了一层分布式架构的”壳”，在底层">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://dingzhen66666666.github.io/img/1.jpg">
+<meta property="article:published_time" content="2026-11-10T13:28:26.000Z">
+<meta property="article:modified_time" content="2026-11-10T15:35:25.949Z">
+<meta property="article:author" content="Yukki">
+<meta property="article:tag" content="中间层">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://dingzhen66666666.github.io/img/1.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "elasticSearch",
+  "url": "https://dingzhen66666666.github.io/2026/11/10/elasticSearch/",
+  "image": "https://dingzhen66666666.github.io/img/1.jpg",
+  "datePublished": "2026-11-10T13:28:26.000Z",
+  "dateModified": "2026-11-10T15:35:25.949Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yukki",
+      "url": "https://dingzhen66666666.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://dingzhen66666666.github.io/2026/11/10/elasticSearch/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'elasticSearch',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-color: #efefef;"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/Yukki.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/1.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">YukkiのBlog</span></a><a class="nav-page-title" href="/"><span class="site-name">elasticSearch</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">elasticSearch</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-11-10T13:28:26.000Z" title="发表于 2026-11-10 21:28:26">2026-11-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-11-10T15:35:25.949Z" title="更新于 2026-11-10 23:35:25">2026-11-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="elasticSearch-ES"><a href="#elasticSearch-ES" class="headerlink" title="elasticSearch(ES)"></a>elasticSearch(ES)</h1><h2 id="一-什么是ES"><a href="#一-什么是ES" class="headerlink" title="一.什么是ES"></a>一.什么是ES</h2><p>elastic Search也就是es，是一个强大的开源、分布式、RESTful 风格的全文搜索引擎，介于应用和数据之间，只要将数据写入es,应用就可以通过一些关键词搜索到数据，效果就和百度类似</p>
+<hr>
+<h2 id="二-ES的底层存储与核心数据结构"><a href="#二-ES的底层存储与核心数据结构" class="headerlink" title="二.ES的底层存储与核心数据结构"></a>二.ES的底层存储与核心数据结构</h2><p>ES的底层是一套用Java编写的开源核心库 – <strong>Lucene</strong> 。ES是在Lucene外面包了一层分布式架构的”壳”，在底层设计了多套极其精巧的数据结构</p>
+<ul>
+<li><strong>倒叙索引</strong>：这是ES的核心数据结构。把内容拆解成词，通过词来找文档，我们将这堆排好序的词项，称为<strong>Term Dictionary</strong>，而词项对应的文档 id 等信息的集合，就叫 <strong>Posting List</strong>。它们共同构成了一个用于搜索的数据结构，它就是<strong>倒排索引(Inverted Index)</strong></li>
+</ul>
+<p><img src="/img/posts/image-20261108152818493.png" alt="image-20261108152818493"></p>
+<blockquote>
+<p> Posting List 还包含<strong>词频</strong>和<strong>词项在文本里的偏移量</strong>等信息</p>
+</blockquote>
+<ul>
+<li><strong>Term Index</strong>：由于企业级数据的词典往往极其庞大，无法全部装入内存。由于词项和词项之间有些前缀是一致的，基于这个原理，我们可以将 Term Dictionary 的<strong>部分</strong>词项提取出来，用这些 词项 的前缀信息，构建出一个<strong>精简的目录树</strong>。目录树的节点中存放这些词项在磁盘中的偏移量，也就是指向磁盘中的位置。这个目录树结构，体积小，适合放内存中，它就是所谓的 <strong>Term Index</strong>。可以用它来加速搜索</li>
+</ul>
+<p><img src="/img/posts/image-20261108154826318.png" alt="image-20261108154826318"></p>
+<ul>
+<li><strong>Stored Fields</strong>：这是一种行式存储结构。倒排索引的任务仅限于找出符合条件的文档 ID，而 Stored Fields 则专门用于保存文档的原始原文数据（如完整的 JSON 结构），以便在搜索命中后将详细信息展示给客户端</li>
+</ul>
+<p><img src="/img/posts/image-20261108155001348.png" alt="image-20261108155001348"></p>
+<ul>
+<li><strong>Doc Values</strong>：构造一个<strong>列式存储</strong>结构，将散落在各个文档的某个字段，<strong>集中</strong>存放，当我们想对某个字段排序的时候，就只需要将这些集中存放的字段一次性读取出来，就能做到针对性地进行排序。这个列式存储结构，就是所谓的 <strong>Doc Values</strong></li>
+</ul>
+<p><img src="/img/posts/image-20261108155138767.png" alt="image-20261108155138767"></p>
+<ul>
+<li><strong>Segment(数据段）</strong>：这些结构共同组成了一个<strong>复合</strong>文件，也就是所谓的”<strong>segment</strong>“, 它是一个具备<strong>完整搜索功能的最小单元</strong></li>
+</ul>
+<p><img src="/img/posts/image-20261108155308638.png" alt="image-20261108155308638"></p>
+<hr>
+<h2 id="三-分布式集群和架构特性"><a href="#三-分布式集群和架构特性" class="headerlink" title="三.分布式集群和架构特性"></a>三.分布式集群和架构特性</h2><p>单机的Lucene算力有限，ES的分布式外壳有着无限扩展空间</p>
+<ul>
+<li><strong>高性能</strong>：对写入 lucene 的数据进行分类,然后根据 Index Name 新增 lucene 的数量，将不同类数据写入到不同的 lucene 中，读取数据时，根据需要搜索不同的 Index Name.但单个 Index Name 内数据依然可能过多，于是可以将单个 Index Name 的同类数据，拆成好几份，每份是一个 <strong>shard 分片</strong>，<strong>每个 shard 分片本质上就是一个独立的 lucene 库</strong>。这样我们就可以将读写操作分摊到多个 分片 中去，大大降低了争抢，提升了系统性能</li>
+</ul>
+<p><img src="/img/posts/image-20261108160114231.png" alt="image-20261108160114231"></p>
+<ul>
+<li>**高扩展性:**将 分片 <strong>分散</strong>部署在多台机器上，这每一台机器，就是一个 <strong>Node</strong>。我们可以通过增加 Node 缓解机器 cpu 过高带来的性能问题</li>
+</ul>
+<p><img src="/img/posts/image-20261108155643151.png" alt="image-20261108155643151"></p>
+<ul>
+<li>**高可用：利用副本（Replica）机制，主分片的数据会自动同步至其他节点。即使个别服务器发生物理宕机，集群也能瞬间切换，不影响整体数据完整性和读写服务。</li>
+</ul>
+<p><img src="/img/posts/image-20261108160330289.png" alt="image-20261108160330289"></p>
+<ul>
+<li><strong>去中心化</strong>：将这不同功能拆开，给集群里的 Node 赋予<strong>角色身份</strong>，不同的角色负责不同的功能。比如负责管理集群的，叫<strong>主节点(Master Node)</strong>， 负责存储管理数据的，叫<strong>数据节点(Data Node)</strong>， 负责接受客户端搜索查询请求的叫<strong>协调节点(Coordinate Node)</strong>。集群规模小的时候，一个 Node 可以<strong>同时</strong>充当多个角色，随着集群规模变大，可以让一个 Node 一个角色</li>
+</ul>
+<p><img src="/img/posts/image-20261108155832716.png" alt="image-20261108155832716"></p>
+<ul>
+<li><strong>Node角色分化</strong>：将这不同功能拆开，给集群里的 Node 赋予<strong>角色身份</strong>，不同的角色负责不同的功能。比如负责管理集群的，叫<strong>主节点(Master Node)</strong>， 负责存储管理数据的，叫<strong>数据节点(Data Node)</strong>， 负责接受客户端搜索查询请求的叫<strong>协调节点(Coordinate Node)</strong>。集群规模小的时候，一个 Node 可以<strong>同时</strong>充当多个角色，随着集群规模变大，可以让一个 Node 一个角色</li>
+</ul>
+<p>​	<img src="/img/posts/image-20261108160621783.png" alt="image-20261108160621783"></p>
+<hr>
+<h2 id="四-核心工作流程"><a href="#四-核心工作流程" class="headerlink" title="四.核心工作流程"></a>四.核心工作流程</h2><h3 id="ES的写入流程："><a href="#ES的写入流程：" class="headerlink" title="ES的写入流程："></a>ES的写入流程：</h3><p>1.协调节点接受数据，通过Hash路由算法锁定目标主分片位置<br>2.主分片所在节点将数据写入内存缓冲区，并同步记录至容灾文件<br>3.默认每间隔1s触发Refresh操作，将缓冲区数据封装为Segment并写入OS Cacher,此时数据即可对外提供搜索<br>4.后台根据阈值出发Flush操作，强制将OS Cache中的数据落盘至物理磁盘，并重置清理Translog,确保数据最终的安全固化</p>
+<h3 id="ES的搜索流程（Query-Then-Fetch"><a href="#ES的搜索流程（Query-Then-Fetch" class="headerlink" title="ES的搜索流程（Query-Then-Fetch)"></a>ES的搜索流程（Query-Then-Fetch)</h3><ul>
+<li><strong>查询阶段</strong>:协调节点将搜索请求扇出给目标索引的所有分片。各分片在本地独立执行匹配计算，完成后向协调节点返回匹配文档的ID列表和相关度打分</li>
+<li><strong>获取阶段</strong>：协调节点在本地内存中对汇聚来的全局文档ID按分数重新进行合并排序。确定最终需返回的TOP N 文档后，向对应的目标分片发起点对点的数据抓取请求，提取完整文档信息后组装返回给客户端</li>
+</ul>
+<hr>
+<h2 id="五-总结"><a href="#五-总结" class="headerlink" title="五.总结"></a>五.总结</h2><p>Elasticsearch 并不是传统意义上的数据库，而是一个<strong>以空间换时间、将内存与并发价值压榨到极致的分布式检索引擎</strong></p>
+<p>它的本质是在 Lucene 这个检索核心之外，精心封装了一层高度可扩展的分布式架构“壳”。在微观底层，它依靠“倒排索引”与“驻留内存的 Term Index字典树”实现了对海量非结构化数据的毫秒级精准打击；依靠“列式 Doc Values”打破了倒排结构无法高效统计的魔咒。而在宏观架构上，它通过精妙的分片路由与多副本机制，轻松跨越了单机硬件的物理瓶颈与单点故障风险</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://Dingzhen66666666.github.io">Yukki</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://dingzhen66666666.github.io/2026/11/10/elasticSearch/">https://dingzhen66666666.github.io/2026/11/10/elasticSearch/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://Dingzhen66666666.github.io" target="_blank">YukkiのBlog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%B8%AD%E9%97%B4%E5%B1%82/">中间层</a></div><div class="post-share"><div class="social-share" data-image="/img/1.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/04/09/%E5%8C%BB%E7%96%97%E5%B0%8F%E6%99%BA/" title="医疗小智"><img class="cover" src="/img/Spring.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">医疗小智</div></div><div class="info-2"><div class="info-item-1">医疗小智一.LangChain4j1.1  核心概念Langchain4j是为java开发者构建大模型（LLM）应用的框架，提供一套统一，简洁的API，将AI能力快速集成到java应用中 1.2 底层组件 ChatLanguageModel(聊天模型）：负责与LLM对话，可以发送提示词并接受AI生成的回复 EmbeddingModel(嵌入模型)与EmbeddingStore(向量存储) : 实现RAG（检索增强生成）。前者将文本转换成向量，后者负责存储和检索这些向量，这样可以让AI记住并检索个人私有库 Document Loader(文档加载器)：帮助从各种来源读取不同格式的文档，为RAG流程做好第一步准备 ChatMemory(聊天记忆)：LLM本身无状态，不记得之前的对话，而这可以帮助模型记住聊天历史，让对话能够持续进行  二.项目配置2.1 创建Maven项目并添加相关依赖12345678910111213141516171819202122232425262728293031323334353637383940&lt;properties&gt; ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/Yukki.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yukki</div><div class="author-info-description">Done is better than perfect.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Dingzhen66666666"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><div class="card-calendar"><div class="cal-main"><div class="cal-left"><div class="cal-week" id="cal-week"></div><div class="cal-date" id="cal-date"></div><div class="cal-year-month" id="cal-year-month"></div></div><div class="cal-right"><table class="cal-grid"><thead><tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr></thead><tbody id="cal-tbody"></tbody></table></div></div><div class="cal-footer">✨ Have a nice day!</div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#elasticSearch-ES"><span class="toc-number">1.</span> <span class="toc-text">elasticSearch(ES)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AFES"><span class="toc-number">1.1.</span> <span class="toc-text">一.什么是ES</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-ES%E7%9A%84%E5%BA%95%E5%B1%82%E5%AD%98%E5%82%A8%E4%B8%8E%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">二.ES的底层存储与核心数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4%E5%92%8C%E6%9E%B6%E6%9E%84%E7%89%B9%E6%80%A7"><span class="toc-number">1.3.</span> <span class="toc-text">三.分布式集群和架构特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%A0%B8%E5%BF%83%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">四.核心工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES%E7%9A%84%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="toc-number">1.4.1.</span> <span class="toc-text">ES的写入流程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ES%E7%9A%84%E6%90%9C%E7%B4%A2%E6%B5%81%E7%A8%8B%EF%BC%88Query-Then-Fetch"><span class="toc-number">1.4.2.</span> <span class="toc-text">ES的搜索流程（Query-Then-Fetch)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E6%80%BB%E7%BB%93"><span class="toc-number">1.5.</span> <span class="toc-text">五.总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/11/10/elasticSearch/" title="elasticSearch"><img src="/img/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="elasticSearch"/></a><div class="content"><a class="title" href="/2026/11/10/elasticSearch/" title="elasticSearch">elasticSearch</a><time datetime="2026-11-10T13:28:26.000Z" title="发表于 2026-11-10 21:28:26">2026-11-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/09/%E5%8C%BB%E7%96%97%E5%B0%8F%E6%99%BA/" title="医疗小智"><img src="/img/Spring.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="医疗小智"/></a><div class="content"><a class="title" href="/2026/04/09/%E5%8C%BB%E7%96%97%E5%B0%8F%E6%99%BA/" title="医疗小智">医疗小智</a><time datetime="2026-04-09T06:18:39.000Z" title="发表于 2026-04-09 14:18:39">2026-04-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/08/Redis/" title="Redis"><img src="/img/2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis"/></a><div class="content"><a class="title" href="/2026/03/08/Redis/" title="Redis">Redis</a><time datetime="2026-03-08T13:16:40.000Z" title="发表于 2026-03-08 21:16:40">2026-03-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/04/27/%E6%95%B0%E6%8D%AE%E5%BA%93/" title="数据库"><img src="/img/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库"/></a><div class="content"><a class="title" href="/2025/04/27/%E6%95%B0%E6%8D%AE%E5%BA%93/" title="数据库">数据库</a><time datetime="2025-04-27T05:37:13.000Z" title="发表于 2025-04-27 13:37:13">2025-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/04/19/%E5%9D%A6%E5%85%8B%E5%A4%A7%E6%88%98/" title="坦克大战"><img src="/img/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="坦克大战"/></a><div class="content"><a class="title" href="/2025/04/19/%E5%9D%A6%E5%85%8B%E5%A4%A7%E6%88%98/" title="坦克大战">坦克大战</a><time datetime="2025-04-19T14:04:14.000Z" title="发表于 2025-04-19 22:04:14">2025-04-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2025 - 2026 By Yukki</div><div class="footer_custom_text">By Yukki</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script src="/js/sakura.js"></script><script src="/js/calendar.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章..." type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
