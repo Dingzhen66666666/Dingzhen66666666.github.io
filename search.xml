@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Kafka</title>
+      <link href="/2026/11/11/Kafka/"/>
+      <url>/2026/11/11/Kafka/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h1><h2 id="一-消息队列"><a href="#一-消息队列" class="headerlink" title="一.消息队列"></a>一.消息队列</h2><h3 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h3><p>当服务A每秒发出的消息高于服务B每秒能够处理的消息，这时候B处理不过来，于是需要加入一层中间层，也就是消息队列。<br>其实它本质是个链表，链表的每个节点就是一个消息，称为Offset。B服务根据自己处理能力，消费链表里的消息，不断更新Offset的值 </p><p><img src="/%5Cimg%5Cposts%5Cimage-20261111083358192.png" alt="image-20261111083358192"></p><p>像服务A负责发数据到消息队列的角色，叫<strong>生产者</strong>。像服务B处理消息的角色，叫<strong>消费者</strong></p><hr><h2 id="二-Kafka特性"><a href="#二-Kafka特性" class="headerlink" title="二.Kafka特性"></a>二.Kafka特性</h2><h3 id="1-高性能性"><a href="#1-高性能性" class="headerlink" title="1.高性能性"></a>1.高性能性</h3><p>对消息进行分类,每一类就是一个topic,根据topic新增队列的数量.生产者根据topic投放到不同的队列中,消费者则订阅不同的topic,这样大大降低了topic队列的压力.<img src="/%5Cimg%5Cposts%5Cimage-20261111084846493.png" alt="image-20261111084846493"></p><p>但是单个topic消息可能过多,因此可以继续细分,将单个队列拆成好几个段,每个段就是一个partition分区,每个消费者负责一个partition,这样大大降低了争抢,提升了消息队列的性能<br><img src="/%5Cimg%5Cposts%5Cimage-20261111084906392.png" alt="image-20261111084906392"></p><h3 id="2-高扩展性"><a href="#2-高扩展性" class="headerlink" title="2.高扩展性"></a>2.高扩展性</h3><p>如果所有partition都在同一台机器,那么单机cpu和内存都会过高.因此可以申请更多的机器,将partition部署在不同的机器上,每台机器代表一个broker.</p><p><img src="/%5Cimg%5Cposts%5Cimage-20261111085108141.png" alt="image-20261111085108141"></p><h3 id="3-高可用"><a href="#3-高可用" class="headerlink" title="3.高可用"></a>3.高可用</h3><p>给partition多加几个副本replicas,将它们分为Leader和Follower.<br>Leader负责应付生产者和消费者的读写请求,而Follower来同步Leader的消息<br>把Leader和Follower部署在不同partiton中,这样一方的broker挂了,不会影响另一方的broker,保证了消息的高可用性<img src="/%5Cimg%5Cposts%5Cimage-20261111091241357.png" alt="image-20261111091241357"></p><h3 id="4-持久化和过期策略"><a href="#4-持久化和过期策略" class="headerlink" title="4.持久化和过期策略"></a>4.持久化和过期策略</h3><p>假如所有的broker都挂了,那数据就全丢失了.<br>因此为了解决这个问题,我们不能只把数据存储在内存中,也要持久化到磁盘中,这样就算broker都挂了,数据也不会全丢,重启服务后,也能从磁盘中读出数据.<br>当然磁盘的总量也是有限的,所以要给数据加上保留策略<em><strong>retention policy</strong></em>,比如数据量超过一定大小或者消息超过一定时间就会背清理掉<img src="/%5Cimg%5Cposts%5Cimage-20261111091254959.png" alt="image-20261111091254959"></p><h3 id="5-consumer-group"><a href="#5-consumer-group" class="headerlink" title="5.consumer group"></a>5.consumer group</h3><p>可以在消费队列加入消费者组的概念,不同的服务各自是一个独立的消费者组,不同消费者组维护自己的消费进度,互不打扰,从不同offset消费<img src="/%5Cimg%5Cposts%5Cimage-20261111091309865.png" alt="image-20261111091309865"></p><h3 id="6-ZooKeeper"><a href="#6-ZooKeeper" class="headerlink" title="6.ZooKeeper"></a>6.ZooKeeper</h3><p>ZooKeeper是一个组件,能够维护统一维护这些组件的状态信息.它灰定期和broker通信,获取整个kafka集群的状态,以此判断某些broker是不是挂了,某些消费者组消费到哪里了<img src="/%5Cimg%5Cposts%5Cimage-20261111091517140.png" alt="image-20261111091517140"></p><hr><h2 id="三-总结"><a href="#三-总结" class="headerlink" title="三.总结"></a>三.总结</h2><p>消息队列Kafka就是从简陋的消息队列变成一个高性能,高扩展性,高可用性,支持持久化的超强消息队列.向消息队列投递消息的是生产者,消费消息的是消费者.增加生产者和消费者个例可以提升系统吞吐,多个消费者可以组成一个消费者组,不同消费者组维护自己的消费进度,互不干扰</p><p>消息队列是架构中最常见的中间件,比如上游流量忽高忽低,想要削峰填谷,提升cpu&#x2F;gpu利用率就用它;系统过大,消息流向复杂,想要拆解组件,降低系统耦合也用它;或者秒杀活动,保护服务的同时也不影响用户,也用它.</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 中间层 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>elasticSearch</title>
       <link href="/2026/11/10/elasticSearch/"/>
       <url>/2026/11/10/elasticSearch/</url>
